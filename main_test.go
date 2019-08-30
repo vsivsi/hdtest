@@ -17,15 +17,15 @@ func BenchmarkHammingDist(b *testing.B) {
 	sigA := generateRandomSig()
 	sigB := generateRandomSig()
 
-	b.Run("256-bit Slice Hamming distance", func(b *testing.B) {
+	b.Run("uint64 256-bit unrolled array Hamming distance", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			HammingDistSlice64(sigA[:], sigB[:])
+			HammingDist4Array64Unroll(&sigA, &sigB)
 		}
 	})
 
-	b.Run("256-bit Array Hamming distance", func(b *testing.B) {
+	b.Run("uint64 256-bit Slice Hamming distance", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			HammingDist4Array64(&sigA, &sigB)
+			HammingDistSlice64(sigA[:], sigB[:])
 		}
 	})
 }
