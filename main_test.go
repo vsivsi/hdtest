@@ -23,6 +23,12 @@ func BenchmarkHD(b *testing.B) {
 		}
 	})
 
+	b.Run("256-bit unrolled array sum HD", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			HammingDist4Array64UnrollSum(&sigA, &sigB)
+		}
+	})
+
 	b.Run("256-bit slice HD", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			HammingDistSlice64(sigA[:], sigB[:])

@@ -24,3 +24,17 @@ func HammingDist4Array64Unroll(b1, b2 *[4]uint64) (sum int) {
 	sum += bits.OnesCount64(b1[3] ^ b2[3])
 	return sum
 }
+
+// HammingDist4Array64UnrollSum counts the number bitwise differences between
+// n-bit signatures b1 and b2 passed as len 4 arrays of uint64 values.
+func HammingDist4Array64UnrollSum(b1, b2 *[4]uint64) (sum int) {
+	c := 0
+	sum += bits.OnesCount64(b1[c] ^ b2[c])
+	c++
+	sum += bits.OnesCount64(b1[c] ^ b2[c])
+	c++
+	sum += bits.OnesCount64(b1[c] ^ b2[c])
+	c++
+	sum += bits.OnesCount64(b1[c] ^ b2[c])
+	return sum
+}
