@@ -1,6 +1,7 @@
 package hdtest
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 )
@@ -31,7 +32,7 @@ func BenchmarkHD(b *testing.B) {
 
 	b.Run("256-bit unrolled slice HD", func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			HammingDistSlice64Unroll(sigA[:], sigB[:])
+			HammingDistSlice64Unroll4Way(sigA[:], sigB[:])
 		}
 	})
 
@@ -40,4 +41,52 @@ func BenchmarkHD(b *testing.B) {
 			HammingDist4Slice64Unroll(sigA[:], sigB[:])
 		}
 	})
+}
+
+func generateRandomSliceSig(n int) (sig []uint64) {
+	sig = make([]uint64, n)
+	for x := range sig {
+		sig[x] = uint64(rand.Uint64())
+	}
+	return sig
+}
+
+func BenchmarkSliceHD(b *testing.B) {
+
+	const max = 100
+
+	sigA := generateRandomSliceSig(max)
+	sigB := generateRandomSliceSig(max)
+
+	testLens := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		12, 15, 18, 21, 24, 27, 30, 40, 50, 75, 100}
+
+	for _, v := range testLens {
+		A := sigA[:v]
+		B := sigB[:v]
+
+		fmt.Println()
+
+		b.Run(fmt.Sprintf("%d-bit loop slice HD", v*64), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				HammingDistSlice64(A, B)
+			}
+		})
+		b.Run(fmt.Sprintf("%d-bit 3-way unrolled slice HD", v*64), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				HammingDistSlice64Unroll3Way(A, B)
+			}
+		})
+		b.Run(fmt.Sprintf("%d-bit 4-way unrolled slice HD", v*64), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				HammingDistSlice64Unroll4Way(A, B)
+			}
+		})
+		b.Run(fmt.Sprintf("%d-bit 6-way unrolled slice HD", v*64), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				HammingDistSlice64Unroll6Way(A, B)
+			}
+		})
+	}
+
 }
