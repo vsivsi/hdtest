@@ -143,6 +143,11 @@ func BenchmarkArrayHD8(b *testing.B) {
 			HammingDist32Slice8UnrollInc(s256A[:], s256B[:])
 		}
 	})
+	b.Run(fmt.Sprintf("%d-bit %d loop slice full dec HD", len(s256A)*bits, bits), func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			HammingDist32Slice8UnrollDec(s256A[:], s256B[:])
+		}
+	})
 	b.Run(fmt.Sprintf("%d-bit %d loop array convert 64-bit HD", len(s256A)*bits, bits), func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
 			var sA, sB [4]uint64
@@ -150,7 +155,7 @@ func BenchmarkArrayHD8(b *testing.B) {
 			sA[1] = binary.LittleEndian.Uint64(s256A[8:])
 			sA[2] = binary.LittleEndian.Uint64(s256A[16:])
 			sA[3] = binary.LittleEndian.Uint64(s256A[24:])
-			sB[0] = binary.LittleEndian.Uint64(s256A[0:])
+			sB[0] = binary.LittleEndian.Uint64(s256B[0:])
 			sB[1] = binary.LittleEndian.Uint64(s256B[8:])
 			sB[2] = binary.LittleEndian.Uint64(s256B[16:])
 			sB[3] = binary.LittleEndian.Uint64(s256B[24:])
@@ -215,10 +220,17 @@ func BenchmarkArrayHD8(b *testing.B) {
 			HammingDist32Array8Convert64(&s256A, &s256B)
 		}
 	})
-	b.Run(fmt.Sprintf("%d-bit %d loop slice convert 64-bit function HD", len(s256A)*bits, bits), func(b *testing.B) {
+	b.Run(fmt.Sprintf("%d-bit %d loop array convert 64-bit function const HD", len(s256A)*bits, bits), func(b *testing.B) {
 		for i := 0; i < b.N; i++ {
-			HammingDist32Slice8Convert64(s256A[:], s256B[:])
+			HammingDist32Array8Convert64Const(&s256A, &s256B)
 		}
 	})
-
+	b.Run(fmt.Sprintf("%d-bit %d loop slice convert 64-bit separate functions HD", len(s256A)*bits, bits), func(b *testing.B) {
+		sA := s256A[:]
+		sB := s256B[:]
+		var aA, aB [4]uint64
+		for i := 0; i < b.N; i++ {
+			HammingDist4Array64Unroll(ConvertByteSliceToUint64Array4(sA, &aA), ConvertByteSliceToUint64Array4(sB, &aB))
+		}
+	})
 }

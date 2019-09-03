@@ -1154,6 +1154,81 @@ func HammingDist32Slice8UnrollInc(b1, b2 []uint8) (sum int) {
 	return sum
 }
 
+// HammingDist32Slice8UnrollDec counts the number bitwise differences between
+// n-bit signatures b1 and b2 passed as slices of uint8 values.
+// Function will panic if b1 and b2 aren't of equal length.
+func HammingDist32Slice8UnrollDec(b1, b2 []uint8) (sum int) {
+	const factor = 32
+	if len(b1) != factor || len(b2) != factor {
+		panic("slices of incorrect length passed to HammingDist")
+	}
+	c := len(b1) - 1
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	c--
+	sum = bits.OnesCount8(b1[c] ^ b2[c])
+	return sum
+}
+
 // HammingDist32Slice8Convert64 counts the number bitwise differences between
 // n-bit signatures b1 and b2 passed as slices of uint8 values.
 func HammingDist32Slice8Convert64(b1, b2 []uint8) (sum int) {
@@ -1179,7 +1254,7 @@ func HammingDist32Slice8Convert64(b1, b2 []uint8) (sum int) {
 	sA[c] = binary.LittleEndian.Uint64(b1[s:])
 	sB[c] = binary.LittleEndian.Uint64(b2[s:])
 
-	HammingDist4Array64Unroll(&sA, &sB)
+	sum = HammingDist4Array64Unroll(&sA, &sB)
 	return sum
 }
 
@@ -1204,6 +1279,34 @@ func HammingDist32Array8Convert64(b1, b2 *[32]uint8) (sum int) {
 	sA[c] = binary.LittleEndian.Uint64(b1[s:])
 	sB[c] = binary.LittleEndian.Uint64(b2[s:])
 
-	HammingDist4Array64Unroll(&sA, &sB)
+	sum = HammingDist4Array64Unroll(&sA, &sB)
 	return sum
+}
+
+// HammingDist32Array8Convert64Const counts the number bitwise differences between
+// n-bit signatures b1 and b2 passed as slices of uint8 values.
+func HammingDist32Array8Convert64Const(b1, b2 *[32]uint8) (sum int) {
+	var sA, sB [4]uint64
+	sA[0] = binary.LittleEndian.Uint64(b1[0:])
+	sA[1] = binary.LittleEndian.Uint64(b2[8:])
+	sA[2] = binary.LittleEndian.Uint64(b1[16:])
+	sA[3] = binary.LittleEndian.Uint64(b2[24:])
+	sB[0] = binary.LittleEndian.Uint64(b1[0:])
+	sB[1] = binary.LittleEndian.Uint64(b2[8:])
+	sB[2] = binary.LittleEndian.Uint64(b1[16:])
+	sB[3] = binary.LittleEndian.Uint64(b2[24:])
+	sum = HammingDist4Array64Unroll(&sA, &sB)
+	return sum
+}
+
+// ConvertByteSliceToUint64Array4 does what it says
+func ConvertByteSliceToUint64Array4(b []uint8, out *[4]uint64) *[4]uint64 {
+	if len(b) < 8*4 {
+		panic("Incorrect slice length in ConvertByteSliceToUint64Array4")
+	}
+	out[0] = binary.LittleEndian.Uint64(b[0:])
+	out[1] = binary.LittleEndian.Uint64(b[8:])
+	out[2] = binary.LittleEndian.Uint64(b[16:])
+	out[3] = binary.LittleEndian.Uint64(b[24:])
+	return out
 }
